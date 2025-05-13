@@ -5,12 +5,18 @@ import os
 # Import the random library
 import random
 
+# Initialise game state variables
+num_to_guess = None
+num_guesses = 0
+
 # Create play_again function
-def reset_game(guess_entry, results, submit_button, play_again_button, state):
+def reset_game():
+	# Set global variables
+	global num_to_guess, num_guesses
 	# Generate a random number and assign it to a variable
-	state['num_to_guess'] = random.randint(1, 10)
+	num_to_guess = random.randint(1, 10)
 	# Set number of guesses to 0
-	state['num_guesses'] = 0
+	num_guesses = 0
 	# Delete result label
 	results.config(text="")
 	# Clear the entry box
@@ -21,21 +27,23 @@ def reset_game(guess_entry, results, submit_button, play_again_button, state):
 	play_again_button.pack_forget()
 
 # Create main game function
-def check_guess(guess_entry, results, submit_button, play_again_button, state):
+def check_guess():
+	global num_guesses
+	
 	# Try/except block
 	try:
 		guess = int(guess_entry.get())
-		state['num_guesses'] += 1
+		num_guesses += 1
 		# Create some logic to check the guess
-		if guess < state['num_to_guess']:
+		if guess < num_to_guess:
 			results.config(text="Your number is too low! Try guessing higher.")
 
-		elif guess > state['num_to_guess']:
+		elif guess > num_to_guess:
 			results.config(text="Your number is too high! Try guessing lower.")
 			
 		else:
-			results.config(text=f"You guessed it! The correct number is {state['num_to_guess']}.")
-			results.config(text=f"It took you {state['num_guesses']} guesses to get it!")
+			results.config(text=f"You guessed it! The correct number is {num_to_guess}.")
+			results.config(text=f"It took you {num_guesses} guesses to get it!")
 			# Disable the Guess button
 			submit_button.config(state=DISABLED)
 			# Enable the Play Again button
@@ -45,6 +53,8 @@ def check_guess(guess_entry, results, submit_button, play_again_button, state):
 		results.config(test="You did not enter a number! Game over.")
 
 def setup_gui():
+	# Make all widgets global
+	global results, guess_entry, submit_button, play_again_button
 	#Create the window
 	root = Tk()
 	# Add a title
@@ -52,8 +62,6 @@ def setup_gui():
 	# Set the size of the app
 	root.geometry('500x350')
 
-	# Set game state
-	state = {'num_to_guess':None, 'num_guesses':0}
 	# Create label
 	instructions = Label(root, text="Guess a number between 1 and 10", font=("Georgia", 18))
 	instructions.pack(pady=20)
@@ -67,17 +75,17 @@ def setup_gui():
 	results.pack(pady=20)
 
 	# Create buttons
-	submit_button = Button(root, text="Submit Guess", command=lambda: check_guess(guess_entry, results, submit_button, play_again_button, state))
+	submit_button = Button(root, text="Submit Guess", command=check_guess)
 	submit_button.pack(pady=20)
 
-	play_again_button = Button(root, text="Play Again?", command=lambda: reset_game(guess_entry, results, submit_button, play_again_button, state))
+	play_again_button = Button(root, text="Play Again?", command=reset_game)
 	play_again_button.pack()
 	# Hide button
 	play_again_button.pack_forget()
 
 
 	# On game start, reset game
-	reset_game(guess_entry, results, submit_button, play_again_button, state)
+	reset_game()
 
 	# Start the app
 	root.mainloop()
