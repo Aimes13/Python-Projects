@@ -55,7 +55,7 @@ def play_game():
 	# Determine the winner
 	result = determine_winner()
 	# Print results
-	results.config(text=summary + "\n" + "\n" + result)
+	results.config(text=summary + "\n\n" + result)
 
 	# Disable the Submit button
 	submit_button.config(state=DISABLED)
